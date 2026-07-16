@@ -1,16 +1,17 @@
 import Layout from "../../components/layout/Layout";
+import DashboardHeader from "../../components/dashboard/DashboardHeader";
+import DashboardStats from "../../components/dashboard/DashboardStats";
+import ChartsSection from "../../components/dashboard/ChartsSection";
+import TopCountries from "../../components/dashboard/TopCountries";
 
 function Dashboard() {
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto py-10 px-6">
-        <h1 className="text-4xl font-bold text-blue-700">
-          Dashboard
-        </h1>
-
-        <p className="mt-4 text-gray-600">
-          Global COVID-19 statistics will appear here.
-        </p>
+      <div className="mx-auto max-w-7xl px-6 py-10">
+        <DashboardHeader />
+        <DashboardStats />
+        <ChartsSection />
+        <TopCountries />
       </div>
     </Layout>
   );
