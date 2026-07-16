@@ -17,3 +17,16 @@ export const getCountries = async () => {
   const response = await api.get("/countries");
   return response.data;
 };
+
+export const getCountryByName = async (countryName) => {
+  const response = await api.get(`/countries/${countryName}`);
+  return response.data;
+};
+
+export const getCountryHistory = async (countryName) => {
+  const response = await api.get(
+    `/historical/${countryName}?lastdays=90`
+  );
+
+  return response.data;
+};

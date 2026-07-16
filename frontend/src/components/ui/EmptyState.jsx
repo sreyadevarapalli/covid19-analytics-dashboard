@@ -1,18 +1,14 @@
-import { FaSearch } from "react-icons/fa";
-
 function EmptyState({
   title = "No Data Found",
-  description = "Try another search.",
+  description = "There is no information available."
 }) {
   return (
-    <div className="rounded-2xl bg-gray-100 py-16 text-center">
-      <FaSearch className="mx-auto text-5xl text-gray-400" />
-
-      <h3 className="mt-5 text-2xl font-bold">
+    <div className="rounded-2xl border border-dashed border-gray-300 p-12 text-center">
+      <h2 className="text-2xl font-bold">
         {title}
-      </h3>
+      </h2>
 
-      <p className="mt-2 text-gray-500">
+      <p className="mt-3 text-gray-500">
         {description}
       </p>
     </div>

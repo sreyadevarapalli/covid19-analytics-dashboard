@@ -10,12 +10,7 @@ function useCountries() {
     async function fetchCountries() {
       try {
         const data = await getCountries();
-
-        const sorted = data
-          .sort((a, b) => b.cases - a.cases)
-          .slice(0, 10);
-
-        setCountries(sorted);
+        setCountries(data);
       } catch (err) {
         setError("Unable to load countries.");
       } finally {
@@ -26,7 +21,11 @@ function useCountries() {
     fetchCountries();
   }, []);
 
-  return { countries, loading, error };
+  return {
+    countries,
+    loading,
+    error,
+  };
 }
 
 export default useCountries;

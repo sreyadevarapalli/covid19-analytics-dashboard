@@ -1,3 +1,4 @@
+import CountryDetails from "./pages/CountryDetails/CountryDetails";
 import {
   BrowserRouter,
   Routes,
@@ -21,6 +22,10 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/compare" element={<Compare />} />
         <Route path="/about" element={<About />} />
+        <Route
+          path="/countries/:countryName"
+          element={<CountryDetails />}
+        />
       </Routes>
     </BrowserRouter>
   );
