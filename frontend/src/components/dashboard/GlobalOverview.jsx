@@ -32,22 +32,29 @@ function GlobalOverview({ stats }) {
   return (
     <section className="mt-16">
 
-        <SectionTitle
-            title="Global Overview"
-            subtitle="Additional COVID-19 statistics"
-        />
+      <SectionTitle
+        title="Global Overview"
+        subtitle="Additional COVID-19 statistics"
+      />
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
         {overview.map((item) => (
-          <Card>
-            <h3 className="text-gray-500">{item.title}</h3>
+          <Card key={item.title}>
+
+            <h3 className="text-gray-500">
+              {item.title}
+            </h3>
 
             <p className="mt-3 text-3xl font-bold text-blue-700">
               {item.value}
             </p>
-          </div>
+
+          </Card>
         ))}
+
       </div>
+
     </section>
   );
 }
