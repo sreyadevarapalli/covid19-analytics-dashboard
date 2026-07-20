@@ -1,12 +1,10 @@
-import Breadcrumb from "../../components/ui/Breadcrumb";
-import EmptyState from "../../components/ui/EmptyState";
-import LineChartHistory from "../../components/charts/LineChartHistory";
-import useCountryHistory from "../../hooks/useCountryHistory";
-import CountryStats from "../../components/countryDetails/CountryStats";
-import CountryHero from "../../components/countryDetails/CountryHero";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
+
+import CountryHero from "../../components/countrydetails/CountryHero";
+import CountryOverview from "../../components/countrydetails/CountryOverview";
+import CountryStats from "../../components/countrydetails/CountryStats";
 
 import Loader from "../../components/ui/Loader";
 import ErrorMessage from "../../components/ui/ErrorMessage";
@@ -14,53 +12,58 @@ import ErrorMessage from "../../components/ui/ErrorMessage";
 import useCountry from "../../hooks/useCountry";
 
 function CountryDetails() {
-  const { countryName } = useParams();
+const { country } = useParams();
 
-  const { country, loading, error } = useCountry(countryName);
-  const {
-  history,
-  loading: historyLoading,
-  error: historyError,
-} = useCountryHistory(countryName);
+const {
+countryData,
+loading,
+error,
+} = useCountry(country);
 
-  if (loading) {
-    return (
-      <Layout>
-        <Loader text="Loading country..." />
-      </Layout>
-    );
-  }
+return ( <Layout> <div className="min-h-screen bg-gray-50">
+{/* Back Navigation */} <div className="mx-auto max-w-7xl px-6 pt-8"> <Link
+         to="/countries"
+         className="inline-flex items-center gap-2 font-medium text-blue-600 transition hover:text-blue-800"
+       >
+← Back to Countries </Link> </div>
 
-  if (error || !country) {
-    return (
-  <Layout>
-    <div className="mx-auto min-h-screen max-w-7xl bg-gray-50 px-6 py-10">
+```
+    {/* Loading State */}
+    {loading && (
+      <Loader message="Loading country details..." />
+    )}
 
-      <Breadcrumb countryName={countryName} />
-
-      <EmptyState
-        title="Country Not Found"
-        description="We couldn't find COVID-19 data for this country."
-      />
-
-    </div>
-  </Layout>
-);
-  }
-
-  return (
-    <Layout>
+    {/* Error State */}
+    {error && (
       <div className="mx-auto max-w-7xl px-6 py-10">
-        <Breadcrumb countryName={country.country} />
+        <ErrorMessage message={error} />
 
-        <CountryHero country={country} />
-
-        <CountryStats country={country} />
-        {history && <LineChartHistory history={history} />}
-
+        <div className="mt-6 text-center">
+          <Link
+            to="/countries"
+            className="inline-block rounded-lg bg-blue-600 px-5 py-2 font-medium text-white transition hover:bg-blue-700"
+          >
+            Return to Countries
+          </Link>
+        </div>
       </div>
-    </Layout>
-  );
+    )}
+
+    {/* Country Details Content */}
+    {!loading && !error && countryData && (
+      <main className="mx-auto max-w-7xl space-y-10 px-6 py-10">
+        <CountryHero country={countryData} />
+
+        <CountryStats country={countryData} />
+
+        <CountryOverview country={countryData} />
+      </main>
+    )}
+  </div>
+</Layout>
+
+
+);
 }
 
 export default CountryDetails;

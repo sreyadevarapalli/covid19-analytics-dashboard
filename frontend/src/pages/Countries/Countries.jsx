@@ -1,132 +1,433 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import Layout from "../../components/layout/Layout";
-
 import CountryHeader from "../../components/countries/CountryHeader";
 import CountryGrid from "../../components/countries/CountryGrid";
 
-import Loader from "../../components/ui/Loader";
-import ErrorMessage from "../../components/ui/ErrorMessage";
 import SearchBar from "../../components/ui/SearchBar";
-import SortDropdown from "../../components/ui/SortDropdown";
 import Pagination from "../../components/ui/Pagination";
+import SortDropdown from "../../components/ui/SortDropdown";
+import EmptyState from "../../components/ui/EmptyState";
 
 import useCountries from "../../hooks/useCountries";
 
 function Countries() {
-  const { countries, loading, error } = useCountries();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [region, setRegion] = useState("All");
+  const [populationRange, setPopulationRange] =
+    useState("All");
 
-  // Search
-  const [search, setSearch] = useState("");
+  const [minCases, setMinCases] = useState("");
+  const [maxCases, setMaxCases] = useState("");
 
-  // Sorting
-  const [sortBy, setSortBy] = useState("cases");
-
-  // Pagination
+  const [sortBy, setSortBy] = useState("default");
   const [currentPage, setCurrentPage] = useState(1);
-  const countriesPerPage = 20;
 
-  // Reset page when search or sort changes
-  useEffect(() => {
+  const countriesPerPage = 12;
+
+  const {
+    countries,
+    loading,
+    error,
+  } = useCountries();
+
+  const regions = [
+    "All",
+    "Africa",
+    "Asia",
+    "Europe",
+    "North America",
+    "South America",
+    "Oceania",
+  ];
+
+  const populationOptions = [
+    {
+      label: "All",
+      value: "All",
+    },
+    {
+      label: "Below 1 Million",
+      value: "below-1m",
+    },
+    {
+      label: "1M – 10M",
+      value: "1m-10m",
+    },
+    {
+      label: "10M – 50M",
+      value: "10m-50m",
+    },
+    {
+      label: "50M – 100M",
+      value: "50m-100m",
+    },
+    {
+      label: "Above 100M",
+      value: "above-100m",
+    },
+  ];
+
+  const sortOptions = [
+    {
+      label: "Default",
+      value: "default",
+    },
+    {
+      label: "Country A-Z",
+      value: "country-asc",
+    },
+    {
+      label: "Country Z-A",
+      value: "country-desc",
+    },
+    {
+      label: "Highest Cases",
+      value: "cases-desc",
+    },
+    {
+      label: "Lowest Cases",
+      value: "cases-asc",
+    },
+    {
+      label: "Highest Deaths",
+      value: "deaths-desc",
+    },
+    {
+      label: "Highest Recovered",
+      value: "recovered-desc",
+    },
+    {
+      label: "Highest Population",
+      value: "population-desc",
+    },
+  ];
+
+  const handleFilterChange = (setter) => (value) => {
+    setter(value);
     setCurrentPage(1);
-  }, [search, sortBy]);
+  };
 
-  // Search + Sort
   const filteredCountries = useMemo(() => {
-    const filtered = countries.filter((country) =>
-      country.country.toLowerCase().includes(search.toLowerCase())
-    );
+    const minimumCases = minCases
+      ? Number(minCases)
+      : null;
 
-    switch (sortBy) {
-      case "name":
-        return [...filtered].sort((a, b) =>
-          a.country.localeCompare(b.country)
-        );
+    const maximumCases = maxCases
+      ? Number(maxCases)
+      : null;
 
-      case "deaths":
-        return [...filtered].sort((a, b) => b.deaths - a.deaths);
+    const filtered = countries.filter((country) => {
+      const countryName =
+        country.country?.toLowerCase() || "";
 
-      case "recovered":
-        return [...filtered].sort((a, b) => b.recovered - a.recovered);
+      const population =
+        Number(country.population) || 0;
 
-      case "active":
-        return [...filtered].sort((a, b) => b.active - a.active);
+      const cases =
+        Number(country.cases) || 0;
 
-      case "population":
-        return [...filtered].sort((a, b) => b.population - a.population);
+      const matchesSearch = countryName.includes(
+        searchTerm.toLowerCase()
+      );
 
-      case "cases":
-      default:
-        return [...filtered].sort((a, b) => b.cases - a.cases);
-    }
-  }, [countries, search, sortBy]);
+      const matchesRegion =
+        region === "All" ||
+        country.continent === region;
 
-  // Pagination Logic
+      const matchesPopulation =
+        populationRange === "All" ||
+        (populationRange === "below-1m" &&
+          population < 1_000_000) ||
+        (populationRange === "1m-10m" &&
+          population >= 1_000_000 &&
+          population <= 10_000_000) ||
+        (populationRange === "10m-50m" &&
+          population > 10_000_000 &&
+          population <= 50_000_000) ||
+        (populationRange === "50m-100m" &&
+          population > 50_000_000 &&
+          population <= 100_000_000) ||
+        (populationRange === "above-100m" &&
+          population > 100_000_000);
+
+      const matchesMinimumCases =
+        minimumCases === null ||
+        cases >= minimumCases;
+
+      const matchesMaximumCases =
+        maximumCases === null ||
+        cases <= maximumCases;
+
+      return (
+        matchesSearch &&
+        matchesRegion &&
+        matchesPopulation &&
+        matchesMinimumCases &&
+        matchesMaximumCases
+      );
+    });
+
+    return [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case "country-asc":
+          return a.country.localeCompare(b.country);
+
+        case "country-desc":
+          return b.country.localeCompare(a.country);
+
+        case "cases-desc":
+          return (
+            (Number(b.cases) || 0) -
+            (Number(a.cases) || 0)
+          );
+
+        case "cases-asc":
+          return (
+            (Number(a.cases) || 0) -
+            (Number(b.cases) || 0)
+          );
+
+        case "deaths-desc":
+          return (
+            (Number(b.deaths) || 0) -
+            (Number(a.deaths) || 0)
+          );
+
+        case "recovered-desc":
+          return (
+            (Number(b.recovered) || 0) -
+            (Number(a.recovered) || 0)
+          );
+
+        case "population-desc":
+          return (
+            (Number(b.population) || 0) -
+            (Number(a.population) || 0)
+          );
+
+        default:
+          return 0;
+      }
+    });
+  }, [
+    countries,
+    searchTerm,
+    region,
+    populationRange,
+    minCases,
+    maxCases,
+    sortBy,
+  ]);
+
   const totalPages = Math.ceil(
     filteredCountries.length / countriesPerPage
   );
 
-  const startIndex = (currentPage - 1) * countriesPerPage;
+  const safeCurrentPage =
+    totalPages === 0
+      ? 1
+      : Math.min(currentPage, totalPages);
 
-  const currentCountries = filteredCountries.slice(
-    startIndex,
-    startIndex + countriesPerPage
-  );
+  const startIndex =
+    (safeCurrentPage - 1) * countriesPerPage;
 
-  if (loading) {
-    return (
-      <Layout>
-        <Loader text="Loading countries..." />
-      </Layout>
+  const paginatedCountries =
+    filteredCountries.slice(
+      startIndex,
+      startIndex + countriesPerPage
     );
-  }
-
-  if (error) {
-    return (
-      <Layout>
-        <ErrorMessage message={error} />
-      </Layout>
-    );
-  }
 
   return (
     <Layout>
       <div className="mx-auto max-w-7xl px-6 py-10">
+        {/* Header */}
         <CountryHeader />
 
-        <SearchBar
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search for a country..."
-        />
+        {/* Filters */}
+        <div className="mb-10 rounded-2xl bg-white p-6 shadow-lg">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* Search */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                Search
+              </label>
 
-        <SortDropdown
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-        />
+              <SearchBar
+                value={searchTerm}
+                onChange={handleFilterChange(
+                  setSearchTerm
+                )}
+                placeholder="Search countries..."
+              />
+            </div>
 
-        <p className="mb-6 text-gray-600">
-          Showing{" "}
-          <span className="font-semibold">
-            {filteredCountries.length}
-          </span>{" "}
-          countries
-        </p>
+            {/* Region */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                Region
+              </label>
 
-        <CountryGrid countries={currentCountries} />
+              <select
+                value={region}
+                onChange={(e) =>
+                  handleFilterChange(setRegion)(
+                    e.target.value
+                  )
+                }
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              >
+                {regions.map((item) => (
+                  <option
+                    key={item}
+                    value={item}
+                  >
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPrevious={() =>
-            setCurrentPage((page) => Math.max(page - 1, 1))
-          }
-          onNext={() =>
-            setCurrentPage((page) =>
-              Math.min(page + 1, totalPages)
-            )
-          }
-        />
+            {/* Population */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                Population
+              </label>
+
+              <select
+                value={populationRange}
+                onChange={(e) =>
+                  handleFilterChange(
+                    setPopulationRange
+                  )(e.target.value)
+                }
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              >
+                {populationOptions.map(
+                  (option) => (
+                    <option
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {option.label}
+                    </option>
+                  )
+                )}
+              </select>
+            </div>
+
+            {/* Minimum Cases */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                Minimum Cases
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                value={minCases}
+                onChange={(e) =>
+                  handleFilterChange(setMinCases)(
+                    e.target.value
+                  )
+                }
+                placeholder="Example: 1000000"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              />
+            </div>
+
+            {/* Maximum Cases */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">
+                Maximum Cases
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                value={maxCases}
+                onChange={(e) =>
+                  handleFilterChange(setMaxCases)(
+                    e.target.value
+                  )
+                }
+                placeholder="Example: 50000000"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+              />
+            </div>
+
+            {/* Sort */}
+            <SortDropdown
+              value={sortBy}
+              onChange={handleFilterChange(setSortBy)}
+              options={sortOptions}
+              label="Sort"
+            />
+          </div>
+        </div>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex min-h-[300px] items-center justify-center">
+            <p className="text-lg text-gray-500">
+              Loading countries...
+            </p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="rounded-xl bg-red-50 p-6 text-center text-red-600">
+            {error}
+          </div>
+        )}
+
+        {/* Results */}
+        {!loading && !error && (
+          <>
+            {/* Result Counter */}
+            <div className="mb-6 flex items-center justify-between">
+              <p className="text-gray-600">
+                Showing{" "}
+                <span className="font-bold text-gray-800">
+                  {filteredCountries.length}
+                </span>{" "}
+                of{" "}
+                <span className="font-bold text-gray-800">
+                  {countries.length}
+                </span>{" "}
+                countries
+              </p>
+
+              <p className="text-sm text-gray-500">
+                Page{" "}
+                {totalPages === 0
+                  ? 0
+                  : safeCurrentPage}{" "}
+                of {totalPages}
+              </p>
+            </div>
+
+            {/* Country Results */}
+            {paginatedCountries.length > 0 ? (
+              <CountryGrid
+                countries={paginatedCountries}
+              />
+            ) : (
+              <EmptyState
+                title="No Countries Found"
+                message="Try changing your search or filters."
+              />
+            )}
+
+            {/* Pagination */}
+            <Pagination
+              currentPage={safeCurrentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </>
+        )}
       </div>
     </Layout>
   );

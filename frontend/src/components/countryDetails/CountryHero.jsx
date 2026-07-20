@@ -1,39 +1,59 @@
-import { Link } from "react-router-dom";
-
 function CountryHero({ country }) {
+  if (!country) {
+    return null;
+  }
+
   return (
-    <div className="mb-10 rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-white shadow-xl">
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-6">
-          <img
-            src={country.countryInfo.flag}
-            alt={country.country}
-            className="h-24 w-36 rounded-lg object-cover shadow"
-          />
-
-          <div>
-            <h1 className="text-5xl font-bold">
-              {country.country}
-            </h1>
-
-            <p className="mt-2 text-lg text-blue-100">
-              {country.continent}
-            </p>
-
-            <p className="mt-1 text-blue-200">
-              Population: {country.population.toLocaleString()}
-            </p>
-          </div>
+    <section className="overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-white shadow-xl md:p-12">
+      <div className="flex flex-col items-center gap-8 md:flex-row">
+        {/* Country Flag */}
+        <div className="flex-shrink-0">
+          {country.countryInfo?.flag ? (
+            <img
+              src={country.countryInfo.flag}
+              alt={`${country.country} flag`}
+              className="h-32 w-48 rounded-xl object-cover shadow-lg"
+            />
+          ) : (
+            <div className="flex h-32 w-48 items-center justify-center rounded-xl bg-white/20">
+              No Flag
+            </div>
+          )}
         </div>
 
-        <Link
-          to="/countries"
-          className="rounded-lg bg-white px-6 py-3 font-semibold text-blue-700 transition hover:bg-blue-100"
-        >
-          ← Back
-        </Link>
+        {/* Country Information */}
+        <div className="text-center md:text-left">
+          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-blue-200">
+            Country Details
+          </p>
+
+          <h1 className="mb-4 text-4xl font-bold md:text-5xl">
+            {country.country || "Unknown Country"}
+          </h1>
+
+          <div className="flex flex-wrap justify-center gap-3 md:justify-start">
+            {country.countryInfo?.iso2 && (
+              <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium">
+                Code: {country.countryInfo.iso2}
+              </span>
+            )}
+
+            {country.continent && (
+              <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium">
+                {country.continent}
+              </span>
+            )}
+
+            {country.population !== undefined && (
+              <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium">
+                Population:{" "}
+                {Number(country.population).toLocaleString()}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 

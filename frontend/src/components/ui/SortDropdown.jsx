@@ -1,25 +1,28 @@
-function SortDropdown({ value, onChange }) {
+function SortDropdown({
+  value,
+  onChange,
+  options = [],
+  label = "Sort",
+}) {
   return (
-    <div className="mb-6">
-      <label
-        htmlFor="sort"
-        className="mb-2 block font-semibold text-gray-700"
-      >
-        Sort By
+    <div className="w-full">
+      <label className="mb-2 block text-sm font-semibold text-gray-700">
+        {label}
       </label>
 
       <select
-        id="sort"
         value={value}
-        onChange={onChange}
-        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 md:w-72"
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 shadow-sm transition focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
       >
-        <option value="cases">Total Cases</option>
-        <option value="deaths">Deaths</option>
-        <option value="recovered">Recovered</option>
-        <option value="active">Active Cases</option>
-        <option value="population">Population</option>
-        <option value="name">Country Name (A–Z)</option>
+        {options.map((option) => (
+          <option
+            key={option.value}
+            value={option.value}
+          >
+            {option.label}
+          </option>
+        ))}
       </select>
     </div>
   );

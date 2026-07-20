@@ -1,12 +1,7 @@
-function Card({
-  children,
-  className = "",
-  onClick,
-}) {
+function Card({ children, className = "" }) {
   return (
     <div
-      onClick={onClick}
-      className={`rounded-2xl border border-gray-100 bg-white p-6 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${className}`}
+      className={`rounded-2xl bg-white p-6 shadow-md transition duration-300 hover:shadow-lg ${className}`}
     >
       {children}
     </div>

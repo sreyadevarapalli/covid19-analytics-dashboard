@@ -1,69 +1,62 @@
-import {
-  FaChartLine,
-  FaGlobe,
-  FaDatabase,
-  FaChartPie,
-} from "react-icons/fa";
-
 function Features() {
   const features = [
     {
-      title: "Real-Time Statistics",
+      icon: "🌍",
+      title: "Global Tracking",
       description:
-        "View the latest global COVID-19 statistics with an easy-to-understand interface.",
-      icon: <FaChartLine className="text-5xl text-blue-600" />,
+        "Monitor COVID-19 statistics from countries around the world.",
     },
     {
-      title: "Country Analysis",
+      icon: "📊",
+      title: "Interactive Analytics",
       description:
-        "Explore COVID-19 data for individual countries and compare key metrics.",
-      icon: <FaGlobe className="text-5xl text-green-600" />,
+        "Explore data through charts, graphs, and meaningful comparisons.",
     },
     {
-      title: "Interactive Charts",
+      icon: "🔎",
+      title: "Country Insights",
       description:
-        "Analyze trends using responsive charts and visualizations.",
-      icon: <FaChartPie className="text-5xl text-orange-500" />,
+        "Search and analyze detailed country-level COVID-19 data.",
     },
     {
-      title: "Data Analytics",
+      icon: "⚖️",
+      title: "Country Comparison",
       description:
-        "Gain insights through Python-powered data analysis and reporting.",
-      icon: <FaDatabase className="text-5xl text-purple-600" />,
+        "Compare statistics between two countries side by side.",
     },
   ];
 
   return (
-    <section className="bg-white py-20">
-      <div className="mx-auto max-w-7xl px-6">
-        <h2 className="text-center text-4xl font-bold">
-          Why Choose COVID Analytics Dashboard?
+    <section>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">
+          Explore the Dashboard
         </h2>
 
-        <p className="mt-4 text-center text-gray-600">
-          A complete platform to explore, analyze, and visualize COVID-19 data.
+        <p className="mt-2 text-gray-600">
+          Use the available tools to explore COVID-19 data.
         </p>
+      </div>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="rounded-2xl bg-slate-50 p-8 text-center shadow-md transition duration-300 hover:-translate-y-2 hover:shadow-xl"
-            >
-              <div className="flex justify-center">
-                {feature.icon}
-              </div>
-
-              <h3 className="mt-6 text-2xl font-semibold">
-                {feature.title}
-              </h3>
-
-              <p className="mt-4 text-gray-600">
-                {feature.description}
-              </p>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {features.map((feature) => (
+          <div
+            key={feature.title}
+            className="rounded-2xl bg-white p-6 shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+          >
+            <div className="mb-4 text-4xl">
+              {feature.icon}
             </div>
-          ))}
-        </div>
+
+            <h3 className="text-lg font-bold text-gray-900">
+              {feature.title}
+            </h3>
+
+            <p className="mt-3 text-sm leading-6 text-gray-600">
+              {feature.description}
+            </p>
+          </div>
+        ))}
       </div>
     </section>
   );

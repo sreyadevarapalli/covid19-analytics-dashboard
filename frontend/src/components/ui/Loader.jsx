@@ -1,11 +1,13 @@
-function Loader({ text = "Loading..." }) {
+function Loader({ message = "Loading..." }) {
   return (
-    <div className="flex flex-col items-center justify-center py-10">
-      <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+    <div className="flex min-h-[300px] items-center justify-center">
+      <div className="text-center">
+        <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
 
-      <p className="mt-4 text-gray-600">
-        {text}
-      </p>
+        <p className="text-gray-500">
+          {message}
+        </p>
+      </div>
     </div>
   );
 }

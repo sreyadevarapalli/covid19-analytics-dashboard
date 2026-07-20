@@ -1,33 +1,25 @@
-import { FaArrowUp } from "react-icons/fa";
+import { formatNumber } from "../../utils/formatNumber";
 
-function StatsCard({ title, value, icon, color }) {
+function StatsCard({
+  title,
+  value,
+  icon,
+}) {
   return (
-    <div className="rounded-2xl bg-white p-6 shadow-lg transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-      <div className="flex items-center justify-between">
-
-        <div>
-          <h3 className="text-gray-500">
-            {title}
-          </h3>
-
-          <h2 className="mt-3 text-3xl font-bold">
-            {value}
-          </h2>
-
-          <div className="mt-4 flex items-center gap-2 text-green-600">
-            <FaArrowUp />
-
-            <span>2.4%</span>
-          </div>
-        </div>
-
-        <div
-          className={`flex h-16 w-16 items-center justify-center rounded-full ${color}`}
-        >
+    <div className="rounded-2xl bg-white p-6 shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <div className="mb-5 flex items-center justify-between">
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-2xl">
           {icon}
         </div>
-
       </div>
+
+      <p className="text-sm font-medium text-gray-500">
+        {title}
+      </p>
+
+      <h3 className="mt-2 text-3xl font-bold text-gray-900">
+        {formatNumber(value)}
+      </h3>
     </div>
   );
 }

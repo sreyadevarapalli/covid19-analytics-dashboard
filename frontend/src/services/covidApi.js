@@ -1,32 +1,31 @@
-import axios from "axios";
-
 const BASE_URL = "https://disease.sh/v3/covid-19";
 
-const api = axios.create({
-  baseURL: BASE_URL,
-});
+async function request(endpoint) {
+  const response = await fetch(`${BASE_URL}${endpoint}`);
 
+  if (!response.ok) {
+    throw new Error("API request failed");
+  }
 
-export const getGlobalStats = async () => {
-  const response = await api.get("/all");
-  return response.data;
-};
+  return response.json();
+}
 
+export async function getGlobalStats() {
+  return request("/all");
+}
 
-export const getCountries = async () => {
-  const response = await api.get("/countries");
-  return response.data;
-};
+export async function getCountries() {
+  return request("/countries");
+}
 
-export const getCountryByName = async (countryName) => {
-  const response = await api.get(`/countries/${countryName}`);
-  return response.data;
-};
-
-export const getCountryHistory = async (countryName) => {
-  const response = await api.get(
-    `/historical/${countryName}?lastdays=90`
+export async function getCountryByName(countryName) {
+  return request(
+    `/countries/${encodeURIComponent(countryName)}`
   );
+}
 
-  return response.data;
-};
+export async function getCountryHistory(countryName) {
+  return request(
+    `/historical/${encodeURIComponent(countryName)}?lastdays=all`
+  );
+}

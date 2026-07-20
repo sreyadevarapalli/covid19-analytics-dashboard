@@ -1,60 +1,61 @@
 import Card from "../ui/Card";
-import SectionTitle from "../ui/SectionTitle";
+
+import { formatNumber } from "../../utils/formatNumber";
 
 function GlobalOverview({ stats }) {
-  const overview = [
+  const overviewItems = [
     {
-      title: "Today's Cases",
-      value: stats.todayCases.toLocaleString(),
+      label: "Total Cases",
+      value: stats?.cases,
     },
     {
-      title: "Today's Recovered",
-      value: stats.todayRecovered.toLocaleString(),
+      label: "Total Deaths",
+      value: stats?.deaths,
     },
     {
-      title: "Critical Cases",
-      value: stats.critical.toLocaleString(),
+      label: "Recovered",
+      value: stats?.recovered,
     },
     {
-      title: "Total Tests",
-      value: stats.tests.toLocaleString(),
+      label: "Active Cases",
+      value: stats?.active,
     },
     {
-      title: "Affected Countries",
-      value: stats.affectedCountries.toLocaleString(),
-    },
-    {
-      title: "World Population",
-      value: stats.population.toLocaleString(),
+      label: "Affected Countries",
+      value: stats?.affectedCountries,
     },
   ];
 
   return (
-    <section className="mt-16">
+    <section>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">
+          Global Overview
+        </h2>
 
-      <SectionTitle
-        title="Global Overview"
-        subtitle="Additional COVID-19 statistics"
-      />
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-
-        {overview.map((item) => (
-          <Card key={item.title}>
-
-            <h3 className="text-gray-500">
-              {item.title}
-            </h3>
-
-            <p className="mt-3 text-3xl font-bold text-blue-700">
-              {item.value}
-            </p>
-
-          </Card>
-        ))}
-
+        <p className="mt-2 text-gray-600">
+          A quick overview of the current global situation.
+        </p>
       </div>
 
+      <Card>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+          {overviewItems.map((item) => (
+            <div
+              key={item.label}
+              className="rounded-xl bg-gray-50 p-5"
+            >
+              <p className="text-sm text-gray-500">
+                {item.label}
+              </p>
+
+              <p className="mt-2 text-2xl font-bold text-gray-900">
+                {formatNumber(item.value)}
+              </p>
+            </div>
+          ))}
+        </div>
+      </Card>
     </section>
   );
 }

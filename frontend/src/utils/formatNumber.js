@@ -1,12 +1,15 @@
-export function formatNumber(value) {
-  if (value >= 1_000_000_000)
-    return (value / 1_000_000_000).toFixed(1) + "B";
+function formatNumber(value) {
+  if (value === undefined || value === null) {
+    return "0";
+  }
 
-  if (value >= 1_000_000)
-    return (value / 1_000_000).toFixed(1) + "M";
+  const number = Number(value);
 
-  if (value >= 1_000)
-    return (value / 1_000).toFixed(1) + "K";
+  if (Number.isNaN(number)) {
+    return "0";
+  }
 
-  return value.toString();
+  return number.toLocaleString("en-US");
 }
+
+export { formatNumber };

@@ -1,27 +1,55 @@
 function Pagination({
   currentPage,
   totalPages,
-  onPrevious,
-  onNext,
+  onPageChange,
 }) {
+  if (totalPages <= 1) {
+    return null;
+  }
+
+  const pages = Array.from(
+    { length: totalPages },
+    (_, index) => index + 1
+  );
+
   return (
-    <div className="mt-10 flex items-center justify-center gap-4">
+    <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
+      {/* Previous Button */}
       <button
-        onClick={onPrevious}
+        type="button"
+        onClick={() =>
+          onPageChange(currentPage - 1)
+        }
         disabled={currentPage === 1}
-        className="rounded-lg bg-blue-600 px-5 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Previous
       </button>
 
-      <span className="font-semibold">
-        Page {currentPage} of {totalPages}
-      </span>
+      {/* Page Numbers */}
+      {pages.map((page) => (
+        <button
+          key={page}
+          type="button"
+          onClick={() => onPageChange(page)}
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+            currentPage === page
+              ? "bg-blue-600 text-white"
+              : "border border-gray-300 hover:bg-gray-100"
+          }`}
+        >
+          {page}
+        </button>
+      ))}
 
+      {/* Next Button */}
       <button
-        onClick={onNext}
+        type="button"
+        onClick={() =>
+          onPageChange(currentPage + 1)
+        }
         disabled={currentPage === totalPages}
-        className="rounded-lg bg-blue-600 px-5 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
       >
         Next
       </button>

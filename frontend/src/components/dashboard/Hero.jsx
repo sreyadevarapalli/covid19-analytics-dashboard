@@ -1,36 +1,22 @@
-import { Link } from "react-router-dom";
-
 function Hero() {
   return (
-    <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-      <div className="mx-auto flex min-h-[85vh] max-w-7xl flex-col items-center justify-center px-6 text-center">
+    <section className="mx-auto max-w-7xl px-6">
+      <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 px-8 py-12 text-white shadow-xl md:px-12">
+        <div className="max-w-3xl">
+          <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-100">
+            Data. Insights. Awareness.
+          </p>
 
-        <h1 className="text-5xl font-extrabold leading-tight md:text-7xl">
-          COVID-19 Analytics Dashboard
-        </h1>
+          <h2 className="text-3xl font-bold leading-tight md:text-5xl">
+            Understand the global impact of COVID-19
+          </h2>
 
-        <p className="mt-6 max-w-3xl text-lg text-blue-100 md:text-xl">
-          Explore global COVID-19 statistics, country-wise analysis,
-          interactive charts, and real-time insights through a modern
-          analytics dashboard.
-        </p>
-
-        <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <Link
-            to="/dashboard"
-            className="rounded-lg bg-white px-8 py-3 font-semibold text-blue-700 transition hover:bg-gray-100"
-          >
-            Explore Dashboard
-          </Link>
-
-          <Link
-            to="/analytics"
-            className="rounded-lg border border-white px-8 py-3 font-semibold transition hover:bg-white hover:text-blue-700"
-          >
-            View Analytics
-          </Link>
+          <p className="mt-6 max-w-2xl text-base leading-7 text-blue-100 md:text-lg">
+            Track global cases, recoveries, deaths, population
+            impact, and country-level statistics through an
+            interactive analytics dashboard.
+          </p>
         </div>
-
       </div>
     </section>
   );

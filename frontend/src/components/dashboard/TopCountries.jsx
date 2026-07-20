@@ -1,84 +1,74 @@
-import useCountries from "../../hooks/useCountries";
+import { Link } from "react-router-dom";
 
-import Loader from "../ui/Loader";
-import ErrorMessage from "../ui/ErrorMessage";
-import SectionTitle from "../ui/SectionTitle";
 import Card from "../ui/Card";
 
-function TopCountries() {
-  const { countries, loading, error } = useCountries();
+import { formatNumber } from "../../utils/formatNumber";
 
-  if (loading) {
-    return <Loader text="Loading countries..." />;
-  }
-
-  if (error) {
-    return <ErrorMessage message={error} />;
-  }
-
-  // Get Top 10 Countries by Total Cases
+function TopCountries({ countries = [] }) {
   const topCountries = [...countries]
-    .sort((a, b) => b.cases - a.cases)
-    .slice(0, 10);
+    .sort(
+      (a, b) =>
+        (Number(b.cases) || 0) -
+        (Number(a.cases) || 0)
+    )
+    .slice(0, 5);
 
   return (
-    <section className="mt-16">
-      <SectionTitle
-        title="Top 10 Countries by Cases"
-        subtitle="Countries with the highest reported COVID-19 cases"
-      />
+    <section>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Top Countries
+          </h2>
 
-      <Card className="overflow-x-auto">
-        <table className="min-w-full">
-          <thead className="bg-blue-600 text-white">
-            <tr>
-              <th className="px-6 py-4 text-left">Rank</th>
-              <th className="px-6 py-4 text-left">Country</th>
-              <th className="px-6 py-4 text-right">Cases</th>
-              <th className="px-6 py-4 text-right">Deaths</th>
-              <th className="px-6 py-4 text-right">Recovered</th>
-              <th className="px-6 py-4 text-right">Active</th>
-            </tr>
-          </thead>
+          <p className="mt-2 text-gray-600">
+            Countries with the highest number of cases.
+          </p>
+        </div>
 
-          <tbody>
-            {topCountries.map((country, index) => (
-              <tr
-                key={country.country}
-                className="border-b transition-colors hover:bg-gray-50"
-              >
-                <td className="px-6 py-4">{index + 1}</td>
+        <Link
+          to="/countries"
+          className="hidden rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 sm:block"
+        >
+          View All
+        </Link>
+      </div>
 
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={country.countryInfo.flag}
-                      alt={country.country}
-                      className="h-6 w-8 rounded object-cover"
-                    />
-                    <span>{country.country}</span>
-                  </div>
-                </td>
+      <Card>
+        <div className="space-y-4">
+          {topCountries.map((country, index) => (
+            <div
+              key={country.country}
+              className="flex items-center justify-between rounded-xl bg-gray-50 p-4 transition hover:bg-gray-100"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700">
+                  {index + 1}
+                </div>
 
-                <td className="px-6 py-4 text-right">
-                  {country.cases.toLocaleString()}
-                </td>
+                <div>
+                  <h3 className="font-semibold text-gray-900">
+                    {country.country}
+                  </h3>
 
-                <td className="px-6 py-4 text-right">
-                  {country.deaths.toLocaleString()}
-                </td>
+                  <p className="text-sm text-gray-500">
+                    {country.continent || "Unknown region"}
+                  </p>
+                </div>
+              </div>
 
-                <td className="px-6 py-4 text-right">
-                  {country.recovered.toLocaleString()}
-                </td>
+              <div className="text-right">
+                <p className="font-bold text-gray-900">
+                  {formatNumber(country.cases)}
+                </p>
 
-                <td className="px-6 py-4 text-right">
-                  {country.active.toLocaleString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                <p className="text-xs text-gray-500">
+                  Cases
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       </Card>
     </section>
   );
