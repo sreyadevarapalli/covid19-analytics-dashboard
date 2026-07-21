@@ -1,67 +1,98 @@
-import { useParams, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
 
-import CountryHero from "../../components/countrydetails/CountryHero";
-import CountryOverview from "../../components/countrydetails/CountryOverview";
-import CountryStats from "../../components/countrydetails/CountryStats";
+import CountryHero from "../../components/countryDetails/CountryHero";
+import CountryOverview from "../../components/countryDetails/CountryOverview";
+import CountryStats from "../../components/countryDetails/CountryStats";
 
-import Loader from "../../components/ui/Loader";
-import ErrorMessage from "../../components/ui/ErrorMessage";
-
-import useCountry from "../../hooks/useCountry";
+import { getCountryByName } from "../../services/covidApi";
 
 function CountryDetails() {
-const { country } = useParams();
+const { countryName } = useParams();
 
-const {
-countryData,
-loading,
-error,
-} = useCountry(country);
+const [country, setCountry] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
 
-return ( <Layout> <div className="min-h-screen bg-gray-50">
-{/* Back Navigation */} <div className="mx-auto max-w-7xl px-6 pt-8"> <Link
-         to="/countries"
-         className="inline-flex items-center gap-2 font-medium text-blue-600 transition hover:text-blue-800"
-       >
-← Back to Countries </Link> </div>
+useEffect(() => {
+async function fetchCountry() {
+try {
+setLoading(true);
+setError(null);
 
-```
-    {/* Loading State */}
-    {loading && (
-      <Loader message="Loading country details..." />
-    )}
+    const data = await getCountryByName(countryName);
 
-    {/* Error State */}
-    {error && (
-      <div className="mx-auto max-w-7xl px-6 py-10">
-        <ErrorMessage message={error} />
+    setCountry(data);
+  } catch (err) {
+    console.error("Country details error:", err);
 
-        <div className="mt-6 text-center">
-          <Link
-            to="/countries"
-            className="inline-block rounded-lg bg-blue-600 px-5 py-2 font-medium text-white transition hover:bg-blue-700"
-          >
-            Return to Countries
-          </Link>
-        </div>
+    setError("Unable to load country details.");
+    setCountry(null);
+  } finally {
+    setLoading(false);
+  }
+}
+
+if (countryName) {
+  fetchCountry();
+}
+
+}, [countryName]);
+
+if (loading) {
+return (
+<Layout>
+<div className="flex min-h-[60vh] items-center justify-center">
+<div className="text-center">
+<div className="mb-4 text-5xl">🌍</div>
+
+        <h2 className="text-2xl font-bold text-gray-700">
+          Loading Country Details...
+        </h2>
+
+        <p className="mt-2 text-gray-500">
+          Fetching the latest COVID-19 statistics.
+        </p>
       </div>
-    )}
+    </div>
+  </Layout>
+);
 
-    {/* Country Details Content */}
-    {!loading && !error && countryData && (
-      <main className="mx-auto max-w-7xl space-y-10 px-6 py-10">
-        <CountryHero country={countryData} />
+}
 
-        <CountryStats country={countryData} />
+if (error || !country) {
+return (
+<Layout>
+<div className="flex min-h-[60vh] items-center justify-center">
+<div className="rounded-2xl bg-red-50 p-10 text-center shadow-lg">
+<div className="mb-4 text-5xl">⚠️</div>
 
-        <CountryOverview country={countryData} />
-      </main>
-    )}
+        <h2 className="text-2xl font-bold text-red-600">
+          {error || "Country data not found"}
+        </h2>
+
+        <p className="mt-2 text-gray-600">
+          Please try again or select another country.
+        </p>
+      </div>
+    </div>
+  </Layout>
+);
+
+}
+
+return (
+<Layout>
+<div className="space-y-8">
+<CountryHero country={country} />
+
+    <CountryOverview country={country} />
+
+    <CountryStats country={country} />
   </div>
 </Layout>
-
 
 );
 }
