@@ -1,11 +1,18 @@
 import CountryCard from "./CountryCard";
 
-function CountryGrid({ countries }) {
+function CountryGrid({
+  countries = [],
+}) {
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {countries.map((country) => (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {countries.map((country, index) => (
         <CountryCard
-          key={country.country}
+          key={
+            country.id ||
+            country.country_name ||
+            country.country ||
+            index
+          }
           country={country}
         />
       ))}

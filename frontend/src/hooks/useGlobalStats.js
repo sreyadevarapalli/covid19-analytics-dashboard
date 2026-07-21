@@ -1,34 +1,36 @@
 import { useEffect, useState } from "react";
+
 import { getGlobalStats } from "../services/covidApi";
 
 function useGlobalStats() {
-
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-
   useEffect(() => {
-
-    async function fetchData() {
-
+    async function fetchStats() {
       try {
+        setLoading(true);
+        setError("");
+
         const data = await getGlobalStats();
+
         setStats(data);
-
       } catch (err) {
-        setError("Failed to load COVID-19 data.");
+        console.error("Global stats error:", err);
 
+        setError(
+          "Unable to load global statistics."
+        );
+
+        setStats(null);
       } finally {
         setLoading(false);
       }
-
     }
 
-    fetchData();
-
+    fetchStats();
   }, []);
-
 
   return {
     stats,
@@ -36,6 +38,5 @@ function useGlobalStats() {
     error,
   };
 }
-
 
 export default useGlobalStats;

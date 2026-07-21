@@ -1,57 +1,52 @@
-function CountryHero({ country }) {
+function CountryHero({
+  country,
+}) {
   if (!country) {
     return null;
   }
 
+  const countryName =
+    country.country_name ||
+    country.country ||
+    "Unknown Country";
+
+  const countryCode =
+    country.country_code ||
+    country.iso2 ||
+    "";
+
+  const flagCode =
+    countryCode
+      .toLowerCase()
+      .slice(0, 2);
+
   return (
-    <section className="overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-700 p-8 text-white shadow-xl md:p-12">
-      <div className="flex flex-col items-center gap-8 md:flex-row">
-        {/* Country Flag */}
-        <div className="flex-shrink-0">
-          {country.countryInfo?.flag ? (
-            <img
-              src={country.countryInfo.flag}
-              alt={`${country.country} flag`}
-              className="h-32 w-48 rounded-xl object-cover shadow-lg"
-            />
-          ) : (
-            <div className="flex h-32 w-48 items-center justify-center rounded-xl bg-white/20">
-              No Flag
-            </div>
-          )}
-        </div>
+    <section className="rounded-2xl bg-white p-8 shadow-lg">
+      <div className="flex flex-col items-center gap-6 md:flex-row">
 
-        {/* Country Information */}
-        <div className="text-center md:text-left">
-          <p className="mb-2 text-sm font-medium uppercase tracking-widest text-blue-200">
-            Country Details
-          </p>
+        {flagCode ? (
+          <img
+            src={`https://flagcdn.com/w320/${flagCode}.png`}
+            alt={`${countryName} flag`}
+            className="h-32 w-48 rounded-xl object-cover shadow"
+          />
+        ) : (
+          <div className="flex h-32 w-48 items-center justify-center rounded-xl bg-gray-200 text-gray-500">
+            No Flag Available
+          </div>
+        )}
 
-          <h1 className="mb-4 text-4xl font-bold md:text-5xl">
-            {country.country || "Unknown Country"}
+        <div>
+          <h1 className="text-4xl font-bold text-gray-800">
+            {countryName}
           </h1>
 
-          <div className="flex flex-wrap justify-center gap-3 md:justify-start">
-            {country.countryInfo?.iso2 && (
-              <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium">
-                Code: {country.countryInfo.iso2}
-              </span>
-            )}
-
-            {country.continent && (
-              <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium">
-                {country.continent}
-              </span>
-            )}
-
-            {country.population !== undefined && (
-              <span className="rounded-full bg-white/20 px-4 py-2 text-sm font-medium">
-                Population:{" "}
-                {Number(country.population).toLocaleString()}
-              </span>
-            )}
-          </div>
+          <p className="mt-2 text-lg text-gray-500">
+            {country.continent ||
+              "Unknown region"}
+          </p>
         </div>
+
       </div>
     </section>
   );

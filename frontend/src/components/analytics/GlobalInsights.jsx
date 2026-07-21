@@ -1,32 +1,52 @@
 import Card from "../ui/Card";
-import useGlobalStats from "../../hooks/useGlobalStats";
 
-function GlobalInsights() {
-  const { stats, loading } = useGlobalStats();
-
-  if (loading) {
+function GlobalInsights({
+  overview = null,
+}) {
+  if (!overview) {
     return (
-      <div className="flex h-40 items-center justify-center text-gray-500">
-        Loading insights...
+      <div className="flex min-h-[200px] items-center justify-center">
+        <p className="text-gray-500">
+          Unable to load global insights.
+        </p>
       </div>
     );
   }
 
-  if (!stats) {
-    return (
-      <div className="flex h-40 items-center justify-center text-red-500">
-        Unable to load global insights.
-      </div>
-    );
-  }
+  const cases =
+    Number(overview.total_cases) || 0;
 
-  const recoveryRate = ((stats.recovered / stats.cases) * 100).toFixed(2);
+  const deaths =
+    Number(overview.total_deaths) || 0;
 
-  const mortalityRate = ((stats.deaths / stats.cases) * 100).toFixed(2);
+  const recovered =
+    Number(overview.total_recovered) || 0;
 
-  const activeRate = ((stats.active / stats.cases) * 100).toFixed(2);
+  const active =
+    Number(overview.active_cases) || 0;
 
-  const testsPerCase = (stats.tests / stats.cases).toFixed(2);
+  const tests =
+    Number(overview.total_tests) || 0;
+
+  const recoveryRate =
+    cases > 0
+      ? ((recovered / cases) * 100).toFixed(2)
+      : "0.00";
+
+  const mortalityRate =
+    cases > 0
+      ? ((deaths / cases) * 100).toFixed(2)
+      : "0.00";
+
+  const activeRate =
+    cases > 0
+      ? ((active / cases) * 100).toFixed(2)
+      : "0.00";
+
+  const testsPerCase =
+    cases > 0
+      ? (tests / cases).toFixed(2)
+      : "0.00";
 
   const insights = [
     {
@@ -60,11 +80,11 @@ function GlobalInsights() {
   ];
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {insights.map((item) => (
         <Card
           key={item.title}
-          className="text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+          className="text-center"
         >
           <div
             className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full text-3xl ${item.bg}`}
@@ -76,7 +96,9 @@ function GlobalInsights() {
             {item.title}
           </h3>
 
-          <p className={`mt-4 text-4xl font-bold ${item.color}`}>
+          <p
+            className={`mt-4 text-4xl font-bold ${item.color}`}
+          >
             {item.value}
           </p>
         </Card>

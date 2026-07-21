@@ -38,7 +38,7 @@ function TopCountries({ countries = [] }) {
         <div className="space-y-4">
           {topCountries.map((country, index) => (
             <div
-              key={country.country}
+              key={`${country.country_name}-${index}`}
               className="flex items-center justify-between rounded-xl bg-gray-50 p-4 transition hover:bg-gray-100"
             >
               <div className="flex items-center gap-4">
@@ -48,11 +48,12 @@ function TopCountries({ countries = [] }) {
 
                 <div>
                   <h3 className="font-semibold text-gray-900">
-                    {country.country}
+                    {country.country_name}
                   </h3>
 
                   <p className="text-sm text-gray-500">
-                    {country.continent || "Unknown region"}
+                    {country.continent ||
+                      "Unknown region"}
                   </p>
                 </div>
               </div>

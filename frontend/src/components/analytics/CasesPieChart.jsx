@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+
 import {
   ResponsiveContainer,
   PieChart,
@@ -25,35 +26,63 @@ const COLORS = [
 ];
 
 function CasesPieChart() {
-  const { countries, loading } = useCountries();
+  const {
+    countries = [],
+    loading,
+    error,
+  } = useCountries();
 
   const chartData = useMemo(() => {
     return [...countries]
-      .sort((a, b) => b.cases - a.cases)
+      .sort(
+        (a, b) =>
+          (Number(b.cases) || 0) -
+          (Number(a.cases) || 0)
+      )
       .slice(0, 10)
       .map((country) => ({
-        name: country.country,
-        value: country.cases,
+        name:
+          country.country ||
+          country.country_name ||
+          "Unknown",
+
+        value: Number(country.cases) || 0,
       }));
   }, [countries]);
 
   if (loading) {
     return (
-      <div className="flex h-96 items-center justify-center text-gray-500">
+      <p className="py-10 text-center text-gray-500">
         Loading chart...
-      </div>
+      </p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="py-10 text-center text-red-500">
+        {error}
+      </p>
+    );
+  }
+
+  if (!chartData.length) {
+    return (
+      <p className="py-10 text-center text-gray-500">
+        No chart data available.
+      </p>
     );
   }
 
   return (
-    <ResponsiveContainer width="100%" height={380}>
+    <ResponsiveContainer width="100%" height={450}>
       <PieChart>
         <Pie
           data={chartData}
           dataKey="value"
           nameKey="name"
           cx="50%"
-          cy="50%"
+          cy="45%"
           outerRadius={120}
           label={({ name, percent }) =>
             `${name} ${(percent * 100).toFixed(1)}%`
@@ -61,14 +90,18 @@ function CasesPieChart() {
         >
           {chartData.map((entry, index) => (
             <Cell
-              key={entry.name}
-              fill={COLORS[index % COLORS.length]}
+              key={`${entry.name}-${index}`}
+              fill={
+                COLORS[index % COLORS.length]
+              }
             />
           ))}
         </Pie>
 
         <Tooltip
-          formatter={(value) => formatNumber(value)}
+          formatter={(value) =>
+            formatNumber(value)
+          }
         />
 
         <Legend

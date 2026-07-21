@@ -1,34 +1,47 @@
 import { useMemo } from "react";
-import useCountries from "../../hooks/useCountries";
 
 function CountrySelector({
   label,
   value,
   onChange,
+  countries = [],
+  loading = false,
 }) {
-  const { countries, loading } = useCountries();
-
   const sortedCountries = useMemo(() => {
     return [...countries].sort((a, b) =>
-      a.country.localeCompare(b.country)
+      (
+        a.country_name ||
+        a.country ||
+        ""
+      ).localeCompare(
+        b.country_name ||
+        b.country ||
+        ""
+      )
     );
   }, [countries]);
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-        <p className="text-center text-gray-500">
-          Loading countries...
-        </p>
+      <div>
+        <label className="mb-2 block text-sm font-semibold text-gray-700">
+          {label}
+        </label>
+
+        <div className="rounded-xl border border-gray-300 bg-gray-50 px-4 py-3">
+          <p className="text-gray-500">
+            Loading countries...
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl bg-white p-6 shadow-md">
+    <div>
       <label
         htmlFor={label}
-        className="mb-3 block text-lg font-semibold text-gray-700"
+        className="mb-2 block text-sm font-semibold text-gray-700"
       >
         {label}
       </label>
@@ -36,19 +49,40 @@ function CountrySelector({
       <select
         id={label}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) =>
+          onChange(e.target.value)
+        }
         className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-gray-700 shadow-sm transition-all duration-200 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
       >
-        <option value="">🌍 Select a Country</option>
+        <option
+          key={`${label}-placeholder`}
+          value=""
+        >
+          🌍 Select a Country
+        </option>
 
-        {sortedCountries.map((country) => (
-          <option
-            key={country.country}
-            value={country.country}
-          >
-            {country.country}
-          </option>
-        ))}
+        {sortedCountries.map(
+          (country, index) => {
+            const countryName =
+              country.country_name ||
+              country.country ||
+              "Unknown Country";
+
+            const uniqueKey =
+              country.id ||
+              country.country_code ||
+              `${countryName}-${index}`;
+
+            return (
+              <option
+                key={uniqueKey}
+                value={countryName}
+              >
+                {countryName}
+              </option>
+            );
+          }
+        )}
       </select>
     </div>
   );

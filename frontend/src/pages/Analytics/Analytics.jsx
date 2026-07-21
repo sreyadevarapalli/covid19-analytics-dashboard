@@ -12,7 +12,17 @@ import TopDeathsBarChart from "../../components/analytics/TopDeathsBarChart";
 import ContinentAnalysis from "../../components/analytics/ContinentAnalysis";
 import GlobalInsights from "../../components/analytics/GlobalInsights";
 
+import useAnalytics from "../../hooks/useAnalytics";
+
 function Analytics() {
+  const {
+    overview,
+    topCountries,
+    continents,
+    loading,
+    error,
+  } = useAnalytics();
+
   return (
     <Layout>
       <div className="mx-auto max-w-7xl px-6 py-10">
@@ -20,45 +30,78 @@ function Analytics() {
         {/* Header */}
         <AnalyticsHeader />
 
-        {/* Global Visualizations */}
-        <AnalyticsSection title="Global Visualizations">
-          <AnalyticsGrid>
+        {/* Loading State */}
+        {loading && (
+          <div className="flex min-h-[300px] items-center justify-center">
+            <p className="text-lg text-gray-500">
+              Loading analytics...
+            </p>
+          </div>
+        )}
 
-            <ChartContainer title="Top 30 Countries by Total Cases">
-              <GlobalCasesChart />
-            </ChartContainer>
+        {/* Error State */}
+        {error && (
+          <div className="rounded-xl bg-red-50 p-6 text-center text-red-600">
+            {error}
+          </div>
+        )}
 
-            <ChartContainer title="Top 30 Active Cases">
-              <ActiveCasesAreaChart />
-            </ChartContainer>
+        {/* Analytics Content */}
+        {!loading && !error && (
+          <>
+            {/* Global Visualizations */}
+            <AnalyticsSection title="Global Visualizations">
+              <AnalyticsGrid>
 
-          </AnalyticsGrid>
-        </AnalyticsSection>
+                <ChartContainer title="Top 30 Countries by Total Cases">
+                  <GlobalCasesChart
+                    countries={topCountries}
+                  />
+                </ChartContainer>
 
-        {/* Distribution */}
-        <AnalyticsSection title="Distribution">
-          <AnalyticsGrid>
+                <ChartContainer title="Top 30 Active Cases">
+                  <ActiveCasesAreaChart
+                    countries={topCountries}
+                  />
+                </ChartContainer>
 
-            <ChartContainer title="Top 10 Cases Distribution">
-              <CasesPieChart />
-            </ChartContainer>
+              </AnalyticsGrid>
+            </AnalyticsSection>
 
-            <ChartContainer title="Top 10 Countries by Deaths">
-              <TopDeathsBarChart />
-            </ChartContainer>
+            {/* Distribution */}
+            <AnalyticsSection title="Distribution">
+              <AnalyticsGrid>
 
-          </AnalyticsGrid>
-        </AnalyticsSection>
+                <ChartContainer title="Top 10 Cases Distribution">
+                  <CasesPieChart
+                    countries={topCountries}
+                  />
+                </ChartContainer>
 
-        {/* Continent Analysis */}
-        <AnalyticsSection title="Continent Analysis">
-          <ContinentAnalysis />
-        </AnalyticsSection>
+                <ChartContainer title="Top 10 Countries by Deaths">
+                  <TopDeathsBarChart
+                    countries={topCountries}
+                  />
+                </ChartContainer>
 
-        {/* Global Insights */}
-        <AnalyticsSection title="Growth & Recovery Analysis">
-          <GlobalInsights />
-        </AnalyticsSection>
+              </AnalyticsGrid>
+            </AnalyticsSection>
+
+            {/* Continent Analysis */}
+            <AnalyticsSection title="Continent Analysis">
+              <ContinentAnalysis
+                continents={continents}
+              />
+            </AnalyticsSection>
+
+            {/* Global Insights */}
+            <AnalyticsSection title="Growth & Recovery Analysis">
+              <GlobalInsights
+                overview={overview}
+              />
+            </AnalyticsSection>
+          </>
+        )}
 
       </div>
     </Layout>

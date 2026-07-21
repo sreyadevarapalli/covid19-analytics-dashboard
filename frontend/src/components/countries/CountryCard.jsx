@@ -1,30 +1,60 @@
 import { useNavigate } from "react-router-dom";
+
 import Card from "../ui/Card";
 
 function CountryCard({ country }) {
   const navigate = useNavigate();
 
+  const countryName =
+    country.country_name ||
+    country.country ||
+    "Unknown Country";
+
+  const countryCode =
+    country.country_code ||
+    country.iso2 ||
+    country.iso3 ||
+    "";
+
+  const flagCode =
+    countryCode
+      .toLowerCase()
+      .slice(0, 2);
+
   return (
     <Card
       onClick={() =>
-        navigate(`/countries/${encodeURIComponent(country.country)}`)
+        navigate(
+          `/countries/${encodeURIComponent(
+            countryName
+          )}`
+        )
       }
       className="cursor-pointer transition duration-300 hover:-translate-y-1 hover:shadow-xl"
     >
       <div className="flex items-center gap-4">
-        <img
-          src={country.countryInfo.flag}
-          alt={country.country}
-          className="h-12 w-16 rounded object-cover"
-        />
+        {flagCode ? (
+          <img
+            src={`https://flagcdn.com/w320/${flagCode}.png`}
+            alt={`${countryName} flag`}
+            className="h-12 w-16 rounded object-cover"
+          />
+        ) : (
+          <div className="flex h-12 w-16 items-center justify-center rounded bg-gray-200 text-xs text-gray-500">
+            No Flag
+          </div>
+        )}
 
         <div>
           <h3 className="text-xl font-bold">
-            {country.country}
+            {countryName}
           </h3>
 
           <p className="text-gray-500">
-            Population: {country.population.toLocaleString()}
+            Population:{" "}
+            {Number(
+              country.population || 0
+            ).toLocaleString()}
           </p>
         </div>
       </div>
@@ -32,29 +62,41 @@ function CountryCard({ country }) {
       <div className="mt-6 space-y-2">
         <div className="flex justify-between">
           <span>Total Cases</span>
+
           <span className="font-semibold">
-            {country.cases.toLocaleString()}
+            {Number(
+              country.cases || 0
+            ).toLocaleString()}
           </span>
         </div>
 
         <div className="flex justify-between">
           <span>Recovered</span>
+
           <span className="font-semibold text-green-600">
-            {country.recovered.toLocaleString()}
+            {Number(
+              country.recovered || 0
+            ).toLocaleString()}
           </span>
         </div>
 
         <div className="flex justify-between">
           <span>Deaths</span>
+
           <span className="font-semibold text-red-600">
-            {country.deaths.toLocaleString()}
+            {Number(
+              country.deaths || 0
+            ).toLocaleString()}
           </span>
         </div>
 
         <div className="flex justify-between">
           <span>Active</span>
+
           <span className="font-semibold text-orange-600">
-            {country.active.toLocaleString()}
+            {Number(
+              country.active || 0
+            ).toLocaleString()}
           </span>
         </div>
       </div>

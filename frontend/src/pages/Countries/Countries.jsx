@@ -119,7 +119,7 @@ function Countries() {
 
     const filtered = countries.filter((country) => {
       const countryName =
-        country.country?.toLowerCase() || "";
+        country.country_name?.toLowerCase() || "";
 
       const population =
         Number(country.population) || 0;
@@ -171,10 +171,14 @@ function Countries() {
     return [...filtered].sort((a, b) => {
       switch (sortBy) {
         case "country-asc":
-          return a.country.localeCompare(b.country);
+          return a.country_name.localeCompare(
+            b.country_name
+          );
 
         case "country-desc":
-          return b.country.localeCompare(a.country);
+          return b.country_name.localeCompare(
+            a.country_name
+          );
 
         case "cases-desc":
           return (
@@ -241,10 +245,8 @@ function Countries() {
   return (
     <Layout>
       <div className="mx-auto max-w-7xl px-6 py-10">
-        {/* Header */}
         <CountryHeader />
 
-        {/* Filters */}
         <div className="mb-10 rounded-2xl bg-white p-6 shadow-lg">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Search */}
@@ -385,7 +387,6 @@ function Countries() {
         {/* Results */}
         {!loading && !error && (
           <>
-            {/* Result Counter */}
             <div className="mb-6 flex items-center justify-between">
               <p className="text-gray-600">
                 Showing{" "}
@@ -408,7 +409,6 @@ function Countries() {
               </p>
             </div>
 
-            {/* Country Results */}
             {paginatedCountries.length > 0 ? (
               <CountryGrid
                 countries={paginatedCountries}
@@ -420,7 +420,6 @@ function Countries() {
               />
             )}
 
-            {/* Pagination */}
             <Pagination
               currentPage={safeCurrentPage}
               totalPages={totalPages}

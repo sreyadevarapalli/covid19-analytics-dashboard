@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+
 import {
   ResponsiveContainer,
   BarChart,
@@ -13,24 +14,52 @@ import useCountries from "../../hooks/useCountries";
 import { formatNumber } from "../../utils/formatNumber";
 
 function TopDeathsBarChart() {
-  const { countries, loading } = useCountries();
+  const {
+    countries = [],
+    loading,
+    error,
+  } = useCountries();
 
   const chartData = useMemo(() => {
     return [...countries]
-      .sort((a, b) => b.deaths - a.deaths)
+      .sort(
+        (a, b) =>
+          (Number(b.deaths) || 0) -
+          (Number(a.deaths) || 0)
+      )
       .slice(0, 10)
       .map((country) => ({
-        country: country.country,
-        deaths: country.deaths,
+        country:
+          country.country ||
+          country.country_name ||
+          "Unknown",
+
+        deaths: Number(country.deaths) || 0,
       }))
       .reverse();
   }, [countries]);
 
   if (loading) {
     return (
-      <div className="flex h-96 items-center justify-center text-gray-500">
+      <p className="py-10 text-center text-gray-500">
         Loading chart...
-      </div>
+      </p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="py-10 text-center text-red-500">
+        {error}
+      </p>
+    );
+  }
+
+  if (!chartData.length) {
+    return (
+      <p className="py-10 text-center text-gray-500">
+        No chart data available.
+      </p>
     );
   }
 
@@ -60,7 +89,9 @@ function TopDeathsBarChart() {
         />
 
         <Tooltip
-          formatter={(value) => formatNumber(value)}
+          formatter={(value) =>
+            formatNumber(value)
+          }
         />
 
         <Bar

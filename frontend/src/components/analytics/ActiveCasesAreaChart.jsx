@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+
 import {
   ResponsiveContainer,
   AreaChart,
@@ -13,29 +14,65 @@ import useCountries from "../../hooks/useCountries";
 import { formatNumber } from "../../utils/formatNumber";
 
 function ActiveCasesAreaChart() {
-  const { countries, loading } = useCountries();
+  const {
+    countries = [],
+    loading,
+    error,
+  } = useCountries();
 
   const chartData = useMemo(() => {
     return [...countries]
-      .sort((a, b) => b.active - a.active)
+      .sort(
+        (a, b) =>
+          (Number(b.active) || 0) -
+          (Number(a.active) || 0)
+      )
       .slice(0, 30)
       .map((country) => ({
-        country: country.country,
-        active: country.active,
+        country:
+          country.country ||
+          country.country_name ||
+          "Unknown",
+
+        active: Number(country.active) || 0,
       }));
   }, [countries]);
 
   if (loading) {
     return (
-      <div className="flex h-96 items-center justify-center text-gray-500">
+      <p className="py-10 text-center text-gray-500">
         Loading chart...
-      </div>
+      </p>
+    );
+  }
+
+  if (error) {
+    return (
+      <p className="py-10 text-center text-red-500">
+        {error}
+      </p>
+    );
+  }
+
+  if (!chartData.length) {
+    return (
+      <p className="py-10 text-center text-gray-500">
+        No chart data available.
+      </p>
     );
   }
 
   return (
-    <ResponsiveContainer width="100%" height={380}>
-      <AreaChart data={chartData}>
+    <ResponsiveContainer width="100%" height={400}>
+      <AreaChart
+        data={chartData}
+        margin={{
+          top: 20,
+          right: 30,
+          left: 20,
+          bottom: 90,
+        }}
+      >
         <CartesianGrid strokeDasharray="3 3" />
 
         <XAxis
@@ -49,7 +86,9 @@ function ActiveCasesAreaChart() {
         <YAxis tickFormatter={formatNumber} />
 
         <Tooltip
-          formatter={(value) => formatNumber(value)}
+          formatter={(value) =>
+            formatNumber(value)
+          }
         />
 
         <Area

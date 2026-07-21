@@ -1,4 +1,5 @@
 import Card from "../ui/Card";
+
 import { formatNumber } from "../../utils/formatNumber";
 
 function ComparisonCard({
@@ -6,128 +7,117 @@ function ComparisonCard({
   compareWith,
 }) {
   if (!countryData) {
-    return (
-      <Card className="flex h-full items-center justify-center p-10">
-        <p className="text-lg text-gray-500">
-          Select a country
-        </p>
-      </Card>
-    );
+    return null;
   }
+
+  const countryName =
+    countryData.country || "Unknown Country";
+
+  const flag =
+    countryData.countryInfo?.flag || "";
+
+  const cases =
+    Number(countryData.cases) || 0;
+
+  const deaths =
+    Number(countryData.deaths) || 0;
+
+  const recovered =
+    Number(countryData.recovered) || 0;
+
+  const active =
+    Number(countryData.active) || 0;
+
+  const population =
+    Number(countryData.population) || 0;
 
   const stats = [
     {
-      label: "Population",
-      key: "population",
-      color: "text-slate-700",
-    },
-    {
       label: "Total Cases",
-      key: "cases",
+      value: cases,
       color: "text-blue-600",
     },
     {
-      label: "Recovered",
-      key: "recovered",
-      color: "text-green-600",
-    },
-    {
       label: "Deaths",
-      key: "deaths",
+      value: deaths,
       color: "text-red-600",
     },
     {
-      label: "Active",
-      key: "active",
+      label: "Recovered",
+      value: recovered,
+      color: "text-green-600",
+    },
+    {
+      label: "Active Cases",
+      value: active,
       color: "text-orange-600",
     },
     {
-      label: "Critical",
-      key: "critical",
+      label: "Population",
+      value: population,
       color: "text-purple-600",
-    },
-    {
-      label: "Tests",
-      key: "tests",
-      color: "text-cyan-600",
     },
   ];
 
   return (
-    <Card className="h-full transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-4 border-b pb-5">
-        <img
-          src={countryData.countryInfo.flag}
-          alt={countryData.country}
-          className="h-12 w-16 rounded-md object-cover shadow"
-        />
+    <Card>
+      {/* Country Header */}
+      <div className="mb-6 flex items-center gap-4">
+        {flag ? (
+          <img
+            src={flag}
+            alt={`${countryName} flag`}
+            className="h-16 w-24 rounded-lg object-cover shadow"
+          />
+        ) : (
+          <div className="flex h-16 w-24 items-center justify-center rounded-lg bg-gray-200 text-sm text-gray-500">
+            No Flag
+          </div>
+        )}
 
         <div>
           <h2 className="text-2xl font-bold text-gray-800">
-            {countryData.country}
+            {countryName}
           </h2>
 
-          <p className="text-sm text-gray-500">
-            {countryData.continent}
+          <p className="text-gray-500">
+            {countryData.continent || "Unknown region"}
           </p>
         </div>
       </div>
 
       {/* Statistics */}
-      <div className="space-y-3">
-        {stats.map((stat) => {
-          const value = countryData[stat.key];
-          const compareValue = compareWith
-            ? compareWith[stat.key]
-            : null;
+      <div className="space-y-4">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="flex items-center justify-between border-b pb-3"
+          >
+            <span className="font-medium text-gray-600">
+              {stat.label}
+            </span>
 
-          const isHigher =
-            compareValue !== null && value > compareValue;
-
-          const isLower =
-            compareValue !== null && value < compareValue;
-
-          return (
-            <div
-              key={stat.key}
-              className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3 transition hover:bg-gray-100"
+            <span
+              className={`font-bold ${stat.color}`}
             >
-              <span className="font-medium text-gray-600">
-                {stat.label}
-              </span>
-
-              <div className="flex items-center gap-2">
-                <span className={`font-bold ${stat.color}`}>
-                  {formatNumber(value)}
-                </span>
-
-                {compareWith && (
-                  <>
-                    {isHigher && (
-                      <span
-                        className="text-green-600"
-                        title="Higher"
-                      >
-                        ▲
-                      </span>
-                    )}
-
-                    {isLower && (
-                      <span
-                        className="text-red-600"
-                        title="Lower"
-                      >
-                        ▼
-                      </span>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          );
-        })}
+              {formatNumber(stat.value)}
+            </span>
+          </div>
+        ))}
       </div>
+
+      {/* Comparison Indicator */}
+      {compareWith && (
+        <div className="mt-6 rounded-xl bg-gray-50 p-4 text-center">
+          <p className="text-sm text-gray-500">
+            Comparing with
+          </p>
+
+          <p className="font-semibold text-gray-800">
+            {compareWith.country}
+          </p>
+        </div>
+      )}
     </Card>
   );
 }
